@@ -1,6 +1,6 @@
 # since dataset itself is monthly , I need to combine them together
 # I only care about residential housing, so filter 
-# 用 # %%来创立一个新的cell
+# 用 # %%来创立一个新的cell，会自动显示在右边interactive window里
 
 # merge dataset + filter  --> pandas
 # pandas是专门处理excel表格/table的。 如果数据是表格，就用pandas读取
@@ -44,4 +44,8 @@ listed_jan_clean = listed_jan.drop(columns = dup_column)
 # %% 检查是否删除了11行
 print(listed_jan.shape)
 print(listed_jan_clean.shape)
+
+
+
+
 # %%
