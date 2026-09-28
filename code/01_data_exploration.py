@@ -46,6 +46,3 @@ print(listed_jan.shape)
 print(listed_jan_clean.shape)
 
 
-
-
-# %%
