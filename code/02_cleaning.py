@@ -1,5 +1,9 @@
 #%%
 from reusable_function import clean_duplicate
+from reusable_function import clean_residential
+from reusable_function import concat_df
+from reusable_function import clean_csv
+#%%
 import os 
 import pandas as pd
 import numpy as np
@@ -46,29 +50,28 @@ print(len(big_table.columns))
 print(big_table['PropertyType'].unique())  # 先看一下房子的类型，确定residential的拼写
 
 #%%
-residential_table = big_table[big_table['PropertyType'] == 'Residential']
+listed_clean = big_table[big_table['PropertyType'] == 'Residential']
 # []内的== 代表T or F，外面的才是筛选条件
 print(f'big_table rows:{len(big_table)}')
-print(f'residential_table rows: {len(residential_table)}')
+print(f'residential_table rows: {len(listed_clean)}')
 
 #存成一个新的csv文件
 # %%
-residential_table.to_csv('/Users/chensirui/Desktop/real estate market analytics/listed_clean.csv', index=False)
+listed_clean.to_csv('/Users/chensirui/Desktop/real estate market analytics/data/middle_steps/listed_clean.csv', index=False)
 
 
 '''
 开始调用function来对listed和sold一起处理
 '''
 # %%
-# %%
 
 sold_folder = '/Users/chensirui/Desktop/real estate market analytics/data/sold/'
 
 cleaned_list = clean_csv(sold_folder)
 big_table_listed = concat_df(cleaned_list)
-residential_sold = clean_residential(big_table_listed)
+sold_clean = clean_residential(big_table_listed)
 
-residential_sold.to_csv('/Users/chensirui/Desktop/real estate market analytics/sold_clean.csv',index=False)
+sold_clean.to_csv('/Users/chensirui/Desktop/real estate market analytics/data/middle_steps/.csv',index=False)
 
 # ============================================
 # 2. Clean Missing Value 
@@ -87,20 +90,20 @@ def missing_value_report(df, name):
     return report
 
 # %%
-listed_missing = missing_value_report(residential_table, 'Listed')
+listed_missing = missing_value_report(listed_clean, 'Listed')
 print(listed_missing)
 
 # %%
-sold_missing = missing_value_report(residential_sold, 'Sold')
+sold_missing = missing_value_report(sold_clean, 'Sold')
 print(sold_missing)
 # %%
 miss_list_90 = listed_missing[listed_missing['missing_percentage']>90].index.tolist()
 miss_sold_90 = sold_missing[sold_missing['missing_percentage']>90].index.tolist()
-listed_nonull = residential_table.drop(columns=miss_list_90)
-sold_nonull = residential_sold.drop(columns=miss_sold_90)
+listed_nonull = listed_clean.drop(columns=miss_list_90)
+sold_nonull = sold_clean.drop(columns=miss_sold_90)
 
-print(residential_table.shape, '->', listed_nonull.shape)
-print(residential_sold.shape, '->', sold_nonull.shape)
+print(listed_clean.shape, '->', listed_nonull.shape)
+print(sold_clean.shape, '->', sold_nonull.shape)
 
 # ============================================
 # 3. data type + convert datetime + check wrong input 
@@ -192,6 +195,43 @@ geo_flag = ['geo_missing','geo_zero','geo_out_of_state']
 print(listed_geo[geo_flag].sum())
 print(sold_geo[geo_flag].sum())
 # %%
-listed_geo.to_csv('/Users/chensirui/Desktop/real estate market analytics/listed_geo_cleaned.csv', index=False)
-sold_geo.to_csv('/Users/chensirui/Desktop/real estate market analytics/sold_geo_cleaned.csv', index=False)
+listed_geo.to_csv('/Users/chensirui/Desktop/real estate market analytics/data/middle_steps/listed_geo.csv', index=False)
+sold_geo.to_csv('/Users/chensirui/Desktop/real estate market analytics/data/middle_steps/sold_geo.csv', index=False)
+
+# ============================================
+# 4. FRED Mortgage Rate 
+# ============================================
+
 # %%
+url = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=MORTGAGE30US"   # given by mentor
+mortgage = pd.read_csv(url)   
+
+mortgage.columns = ['date', '30years_fixed_rate']
+mortgage['date'] = pd.to_datetime(mortgage['date'])  # date must be datetime
+
+# rate must be numeric
+mortgage['30years_fixed_rate'] = pd.to_numeric(mortgage['30years_fixed_rate'], errors='coerce')
+print(mortgage.head())   
+print(mortgage.tail())   # make sure it covers 2026.3
+
+# %%
+# seperate by month 
+mortgage['year_month'] = mortgage['date'].dt.to_period('M')
+
+# groupby month, take avg rate
+mortgage_monthly = (
+    mortgage.groupby('year_month')['30years_fixed_rate'].mean().reset_index())
+
+# %%
+# listed 用"挂牌日期"对应哪个月;sold 用"成交日期"对应哪个月
+listed_geo['year_month'] = listed_geo['ListingContractDate'].dt.to_period('M')
+sold_geo['year_month'] = sold_geo['CloseDate'].dt.to_period('M')
+
+# %%
+listed_rates = listed_geo.merge(mortgage_monthly, on='year_month', how='left')
+sold_rates = sold_geo.merge(mortgage_monthly, on='year_month', how='left')
+
+# %%
+listed_rates.to_csv('/Users/chensirui/Desktop/real estate market analytics/data/middle_steps/listed_rates.csv', index=False)
+sold_rates.to_csv('/Users/chensirui/Desktop/real estate market analytics/data/middle_steps/sold_rates.csv', index=False)
+
