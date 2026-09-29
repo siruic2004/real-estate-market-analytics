@@ -53,6 +53,8 @@ print(sold_outlier[outlier_cols].sum())    # sum to see how many outliers each c
 #%%
 has_outlier = sold_outlier[outlier_cols].any(axis=1)   # in this row even 1 outlier counts
 no_outlier = sold_outlier[~ has_outlier]
+no_outlier.to_csv('/Users/chensirui/Desktop/real estate market analytics/data/middle_steps/no_outlier.csv', index=False)
+
 original_rows = len(sold_outlier)
 clean_rows = len(no_outlier)
 print("original rows:", original_rows)

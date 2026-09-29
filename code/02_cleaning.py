@@ -71,7 +71,7 @@ cleaned_list = clean_csv(sold_folder)
 big_table_listed = concat_df(cleaned_list)
 sold_clean = clean_residential(big_table_listed)
 
-sold_clean.to_csv('/Users/chensirui/Desktop/real estate market analytics/data/middle_steps/.csv',index=False)
+sold_clean.to_csv('/Users/chensirui/Desktop/real estate market analytics/data/middle_steps/sold_clean.csv',index=False)
 
 # ============================================
 # 2. Clean Missing Value 
