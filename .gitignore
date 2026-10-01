@@ -1,6 +1,8 @@
 # Project-specific: exclude raw data (confidential MLS data)
 data/
 .DS_Store
+.venv-adsp/
+.~*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

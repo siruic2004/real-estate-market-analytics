@@ -41,3 +41,6 @@ print('missing mortgage rates:', listed['30years_fixed_rate'].isnull().sum())
 
 listed_NoInvalidAndOutliers.to_csv('/Users/chensirui/Desktop/real estate market analytics/data/middle_steps/listed_NoInvalidAndOutliers.csv', index=False)
 
+
+
+# %%
