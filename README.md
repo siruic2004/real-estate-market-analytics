@@ -4,7 +4,7 @@ A data analytics project where I analyzed residential real estate market trends 
 
 ## 1. Why I built this
 
-I wanted to see what's actually happening in the California housing market - how prices are moving, how fast homes are selling, and whether mortgage rates are connected to any of that. I built a full pipeline myself, from messy raw MLS files all the way to an interactive Tableau dashboard, the same kind of work a real estate data analyst would actually be asked to do.
+I wanted to see what's actually happening in the California housing market - how prices are moving, how fast homes are selling, and whether mortgage rates are connected to any of that. I built a full pipeline myself, from messy raw MLS files all the way to an interactive Tableau dashboard.
 
 ## 2. Where the data came from
 
@@ -12,7 +12,7 @@ I wanted to see what's actually happening in the California housing market - how
 
 2. I also pulled in the 30-Year Fixed Mortgage Rate from FRED (Federal Reserve Economic Data), and merged it in by month.
 
-3. One important note: the raw MLS data is confidential, so I excluded it from this repo using .gitignore. What you see here is just the code and this README - the actual transaction data was never uploaded anywhere.
+3. One important note: the raw MLS data is confidential, so I excluded it from this repo using .gitignore. 
 
 ## 3. How I approached it
 
