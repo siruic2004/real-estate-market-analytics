@@ -16,22 +16,22 @@ I wanted to see what's actually happening in the California housing market - how
 
 ## 3. How I approached it
 
-1. Merge and clean
+1. Merge and clean:
    I had 27 monthly CSV files each for listings and sales. The raw files had duplicate columns - the same field got exported twice under slightly different names, like PropertyType and PropertyType.1. I wrote one reusable function to catch and remove these duplicates so I didn't have to repeat the same code 27 times, then merged everything into one table and filtered down to residential properties only.
 
-2. Handle missing data
+2. Handle missing data:
    I checked what percentage of each column was missing, and dropped any column that was missing more than 90% of its values, since a column that's almost completely empty isn't really usable for analysis.
 
-3. Validate data quality
+3. Validate data quality:
    Instead of deleting rows with weird or invalid values, I flagged them instead. I added boolean columns for things like invalid prices (zero or negative), invalid square footage, negative days-on-market, dates that didn't make sense in order (like a contract date happening after the close date), and coordinates that fell outside California. This way I kept the full dataset intact but could still filter down to a clean subset whenever I needed to.
 
-4. Feature engineering
+4. Feature engineering:
    I built new features from the raw fields: price-to-list ratio, close-price-to-original-list-price ratio, price per square foot, and I split days-on-market into two separate phases - listing to contract, and contract to close.
 
-5. Outlier detection
+5. Outlier detection:
    I used the IQR (Interquartile Range) method on Close Price, Living Area,and Days on Market. I picked IQR over a standard deviation approach because housing prices are right-skewed (a handful of very expensive homes pull the distribution), and IQR handles that kind of skew better.
 
-6. External data integration and visualization
+6. External data integration and visualization:
    Last step was merging in the monthly average mortgage rate from FRED and building two Tableau dashboards to visualize everything.
 
 ## 4. What I found
